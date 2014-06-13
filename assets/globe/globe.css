@@ -12,8 +12,12 @@
     height: 100%;
   }
 
-  #info {
+  #container {
+    border: 15px solid #FC0;
+    height: 96%;
+  }
 
+  #info {
     font-size: 11px;
     position: absolute;
     bottom: 5px;
