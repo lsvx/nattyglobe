@@ -1,16 +1,22 @@
-/**
- * Bootstrap
- *
- * An asynchronous boostrap function that runs before your Sails app gets lifted.
- * This gives you an opportunity to set up your data model, run jobs, or perform some special logic.
- *
- * For more information on bootstrapping your app, check out:
- * http://sailsjs.org/#documentation
- */
+var amqp = require('amqp');
 
 module.exports.bootstrap = function (cb) {
+    var amqp_conn = this.amqp_conn = amqp.createConnection({
+        host: 'localhost',
+        port: 5672
+    });
 
-  // It's very important to trigger this callack method when you are finished 
-  // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
-  cb();
+    amqp_conn.on('ready', function(){
+        amqp_conn.queue('task_queue', {
+            autoDelete: false,
+            durable: true
+        }, function(queue) {
+            queue.subscribe({ack: true}, function(msg) {
+                console.log(msg);
+                queue.shift(); // basic_ack equivalent
+            });
+        });
+    });
+
+    cb();
 };
