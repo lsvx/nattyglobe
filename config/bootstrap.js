@@ -12,7 +12,7 @@ module.exports.bootstrap = function (cb) {
             durable: true
         }, function(queue) {
             queue.subscribe({ack: true}, function(msg) {
-                console.log(msg);
+                console.log(msg.data.toString('ascii', 0, msg.data.length));
                 queue.shift(); // basic_ack equivalent
             });
         });
