@@ -1,4 +1,5 @@
 var amqp = require('amqp');
+var messenger = require('../api/services/messenger');
 
 module.exports.bootstrap = function (cb) {
     var connection = amqp.createConnection({
@@ -7,12 +8,13 @@ module.exports.bootstrap = function (cb) {
     });
 
     connection.on('ready', function(){
-        connection.queue('nattyglobe', {
+        connection.queue('NattyGlobe', {
             autoDelete: false,
             durable: true
         }, function(queue) {
             queue.subscribe({ack: true}, function(msg) {
-                console.log(msg);
+                var j = JSON.parse(msg.data.toString());
+                messenger.newLogin(j[0]);
                 queue.shift(); // basic_ack equivalent
             });
         });
