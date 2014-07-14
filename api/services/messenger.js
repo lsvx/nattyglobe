@@ -22,6 +22,8 @@ module.exports = {
     try {
       self.lookup(msg.ip).then(function(data) {
         data.timestamp = msg.timestamp;
+        // Emit a message to all the connected sockets with the new data.
+        sails.io.sockets.emit('message', data);
         console.log(data);
       });
     }
