@@ -14,7 +14,7 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
-
+var moment = require('moment');
 module.exports = {
 
   main: function (req, res) {
@@ -29,11 +29,29 @@ module.exports = {
     return res.json(daData);
   },
 
+  ready: function(req, res) {
+
+    Location.findAll().done(function(err, locations) {
+      locations.filter(function(location) {
+        location.timestamps.filter(function(timestamp) {
+          curr = Number(moment().subtract('5', 'minutes').format("X"));
+          if (timestamp > curr)  return timestamp;
+        });
+
+        if(location.timestamps.length) return location;
+      });
+
+      return res.json(locations);
+
+    });
+  }
+
   /**
    * Overrides for the settings in `config/controllers.js`
    * (specific to GlobeController)
    */
-  _config: {}
+  _config: {},
+
 
 
 };

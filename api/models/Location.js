@@ -9,16 +9,17 @@ module.exports = {
 
 	attributes: {
     id: {
-      type: 'string'
+      type: 'STRING',
+      primaryKey: true
     },
     latitude: {
-      type: 'float'
+      type: 'FLOAT'
     },
     longitude: {
-      type: 'float'
+      type: 'FLOAT'
     },
     timestamps: {
-      type: 'array'
+      type: 'ARRAY'
     }
 	},
 

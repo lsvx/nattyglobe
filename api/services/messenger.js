@@ -39,19 +39,21 @@ module.exports = {
 
                   // Error handling
                   if (err) {
+                    console.log('here I go !!');
                     return console.log(err);
                   // The User was created successfully!
                   } else {
-                    console.log("User created:", user);
+                    console.log("Located Created!! ", location);
                   }
                 });
               }
               else {
+                
                 location.timestamps.push(data.timestamp);
-                location.save(function(err) {
-                  if (err) { console.log(err); }
-                  else { console.log('location timestamp added'); }
-                });
+                Location.update({id: ll}, {timestamps: location.timestamps}, function (err, location) {
+                   if (err) { console.log(err); }
+                   else { console.log('location timestamp added'); }
+                 });
               }
             }
           });
