@@ -55,6 +55,9 @@ module.exports = {
               }
             }
           });
+        // Emit a message to all the connected sockets with the new data.
+        sails.io.sockets.emit('message', data);
+        console.log(data);
       });
     }
     catch (e) {

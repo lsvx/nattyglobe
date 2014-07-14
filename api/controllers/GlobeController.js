@@ -21,6 +21,13 @@ module.exports = {
       return res.view();
   },
 
+  all: function(req, res) {
+    // We want to replace daData with an actual reference to all the geo data.
+    var daData = {"all": "I swear dis is all the data"};
+    // By default, res.json will reply on the open connection so you do not
+    // need to explocitly reply on a socket.
+    return res.json(daData);
+  },
 
   /**
    * Overrides for the settings in `config/controllers.js`
