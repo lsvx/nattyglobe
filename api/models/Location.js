@@ -8,7 +8,18 @@
 module.exports = {
 
 	attributes: {
-    
+    id: {
+      type: 'string'
+    },
+    latitude: {
+      type: 'float'
+    },
+    longitude: {
+      type: 'float'
+    },
+    timestamps: {
+      type: 'array'
+    }
 	},
 
 
