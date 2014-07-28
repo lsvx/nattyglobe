@@ -24,61 +24,55 @@
         };
       };
 
-      for(var i = 0; i<years.length; i++) {
-        var y = document.getElementById('year'+years[i]);
-        y.addEventListener('mouseover', settime(globe,i), false);
-      }
+
 
       TWEEN.start();
 
-
-
-
-
-        /*
-        window.data = data;
-        for (i=0;i<data.length;i++) {
-            globe.addData(data[i][1], {format: 'magnitude', name: data[i][0], animated: true});
-        }
-        globe.addPoint
-        */
-        //globe.createPoints();
-        //settime(globe,0)();
-        globe.animate();
-
-
+      globe.animate();
 
       // -32.9479009,-60.6650597, 0.7
 
-      var totalPoints = []
+      var totalPoints = [];
 
-      globe.addPoint = function(lat, long, mag){
-          totalPoints.push(lat,long,mag);
+      globe.addPoint = function(obj){
+          for (var i = 0; i < totalPoints.length; i++) {
+              if(totalPoints[i].id == obj.id){
+                  totalPoints[i].timestamps = obj.timestamps;
+                  return ;
+              }
+          }
+          totalPoints.push(obj);
       }
 
       globe.updatePoints = function(){
+          var all = [], magnitude, ts, now = Date.now(), msecs;
+
           globe.resetData();
-          globe.addData(totalPoints, {format: 'magnitude', name: '1990', animated: true})
+          for (var i = 0; i < totalPoints.length; i++) {
+              magnitude = 0;
+              /*if (i == 63){
+                debugger;
+              }*/
+              for (var k = 0; k < totalPoints[i].timestamps.length; k++) {
+                ts = totalPoints[i].timestamps[k];
+                msecs = now - ts;
+
+                if(1*60*1000 > msecs){
+                    magnitude += 1-msecs/1/60/1000;
+                }
+              }
+              magnitude = magnitude/totalPoints[i].timestamps.length;
+              all.push(totalPoints[i].latitude, totalPoints[i].longitude, magnitude);
+          };
+          globe.addData(all, {format: 'magnitude', name: '1990', animated: true})
           globe.createPoints();
           settime(globe, 0)();
       }
 
-
-
       globe.parsePoints = function(list){
         var magnitude, msecs, ts, now = Date.now();
         for (var i = 0; i < list.length; i++) {
-          magnitude = 0;
-          for (var k = 0; k < list[i].timestamps.length; k++) {
-            ts = list[i].timestamps[k];
-            msecs = now - ts;
-
-            if(1*60*1000 > msecs){
-                magnitude += 1-msecs/1/60/1000;
-            }
-          };
-          magnitude = magnitude/list[i].timestamps.length;
-          globe.addPoint(list[i].latitude, list[i].longitude, magnitude);
+            globe.addPoint(list[i]);
         };
         globe.updatePoints();
       }
