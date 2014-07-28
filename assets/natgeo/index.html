@@ -182,6 +182,17 @@
         }
       };
       xhr.send(null);
+
+      // -32.9479009,-60.6650597, 0.7
+      addPoint = function(lat, long, mag){
+          globe.resetData();
+          globe.addData([lat,long, mag/3], {format: 'magnitude', name: '1990', animated: true});
+          globe.addData([lat,long, mag*2/3], {format: 'magnitude', name: '1995', animated: true});
+          globe.addData([lat,long, mag], {format: 'magnitude', name: '2000', animated: true});
+          globe.createPoints();
+          settime(globe, 0)();
+      }
+
     }
 
   </script>
