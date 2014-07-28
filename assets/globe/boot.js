@@ -63,9 +63,22 @@
           settime(globe, 0)();
       }
 
+
+
       globe.parsePoints = function(list){
+        var magnitude, msecs, ts, now = Date.now();
         for (var i = 0; i < list.length; i++) {
-          globe.addPoint(list[i].lat, list[i].long, list[i].magnitude);
+          magnitude = 0;
+          for (var k = 0; k < list[i].timestamps.length; k++) {
+            ts = list[i].timestamps[k];
+            msecs = now - ts;
+
+            if(1*60*1000 > msecs){
+                magnitude += 1-msecs/1/60/1000;
+            }
+          };
+          magnitude = magnitude/list[i].timestamps.length;
+          globe.addPoint(list[i].latitude, list[i].longitude, magnitude);
         };
         globe.updatePoints();
       }

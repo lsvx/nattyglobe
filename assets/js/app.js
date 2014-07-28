@@ -9,20 +9,19 @@
         // Model-specific messages are published on channels with the same name as
         // that model.
         // Listen for Comet messages from Sails
-        socket.on('message', function messageReceived(message) {
-
+        socket.on('location', function messageReceived(message) {
             ///////////////////////////////////////////////////////////
             // Replace the following with your own custom logic
             // to run when a new message arrives from the Sails.js
             // server.
             ///////////////////////////////////////////////////////////
-            console.log('New comet message received :: ', message);
+            globe.parsePoints([message]);
             //////////////////////////////////////////////////////
 
         });
 
         // The globe just connected to sails. Let's get the data!
-        socket.get('/all', function(res) {
+        socket.get('/ready', function(res) {
             globe.parsePoints(res);
         });
     });

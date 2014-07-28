@@ -35,7 +35,8 @@ module.exports = {
 
   ready: function(req, res) {
 
-    Location.findAll().done(function(err, locations) {
+
+    Location.find().done(function(err, locations) {
       locations.filter(function(location) {
         location.timestamps.filter(function(timestamp) {
           curr = Number(moment().subtract('5', 'minutes').format("X"));
@@ -48,6 +49,21 @@ module.exports = {
       return res.json(locations);
 
     });
+  },
+
+  random: function(req, res){
+      var lat = Math.random()*180-90,
+          long = Math.random()*360-180;
+
+      return Location.create({
+                  id: lat.toString() + long.toString(),
+                  timestamps: [Date.now()],
+                  latitude: lat,
+                  longitude: long
+      }).done(function(err, loc){
+          sails.io.sockets.emit('location', loc);
+          return res.json(loc);
+      });
   },
 
   /**

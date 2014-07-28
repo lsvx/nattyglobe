@@ -38,6 +38,8 @@ module.exports.routes = {
 
     'get /globe': 'GlobeController.main',
     'get /all': 'GlobeController.all',
+    'get /ready': 'GlobeController.ready',
+    'get /random': 'GlobeController.random',
 
   /*
   // But what if you want your home page to display
