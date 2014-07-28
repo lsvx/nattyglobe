@@ -44,13 +44,13 @@ module.exports = {
       return res.json(locations);
 
     });
-  }
+  },
 
   /**
    * Overrides for the settings in `config/controllers.js`
    * (specific to GlobeController)
    */
-  _config: {},
+  _config: {}
 
 
 
