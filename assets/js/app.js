@@ -23,7 +23,7 @@
 
         // The globe just connected to sails. Let's get the data!
         socket.get('/all', function(res) {
-            console.log(res);
+            globe.parsePoints(res);
         });
     });
 

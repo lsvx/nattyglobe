@@ -23,10 +23,14 @@ module.exports = {
 
   all: function(req, res) {
     // We want to replace daData with an actual reference to all the geo data.
-    var daData = {"all": "I swear dis is all the data"};
+    // -32.9479009,-60.6650597,
+    var data = [
+      {lat: -32.9479009, long: -60.6650597, magnitude: 0.7, timestamp: Date.now()},
+      {lat: 32.9479009, long: -60.6650597, magnitude: 0.7, timestamp: Date.now()}
+    ];
     // By default, res.json will reply on the open connection so you do not
     // need to explocitly reply on a socket.
-    return res.json(daData);
+    return res.json(data);
   },
 
   ready: function(req, res) {
