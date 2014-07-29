@@ -6,76 +6,81 @@
       var container = document.getElementById('container');
       var globe = new DAT.Globe(container);
 
-      console.log(globe);
       var i, tweens = [];
 
       var settime = function(globe, t) {
         return function() {
           new TWEEN.Tween(globe).to({time: t/years.length},500).easing(TWEEN.Easing.Cubic.EaseOut).start();
           var y = document.getElementById('year'+years[t]);
-          if (y.getAttribute('class') === 'year active') {
-            return;
-          }
           var yy = document.getElementsByClassName('year');
           for(i=0; i<yy.length; i++) {
             yy[i].setAttribute('class','year');
           }
-          y.setAttribute('class', 'year active');
         };
       };
-
-
 
       TWEEN.start();
 
       globe.animate();
 
-      // -32.9479009,-60.6650597, 0.7
-
-      var totalPoints = [];
+      globe.locations = [];
 
       globe.addPoint = function(obj){
-          for (var i = 0; i < totalPoints.length; i++) {
-              if(totalPoints[i].id == obj.id){
-                  totalPoints[i].timestamps = obj.timestamps;
-                  return ;
+          for (var i = 0; i < this.locations.length; i++) {
+              if(this.locations[i].id == obj.id){
+                  this.locations[i].timestamps = obj.timestamps;
+                  return this.locations[i];
               }
           }
-          totalPoints.push(obj);
-      }
+          this.locations.push(obj);
+          return obj;
+      };
 
       globe.updatePoints = function(){
-          var all = [], magnitude, ts, now = Date.now(), msecs;
+          var all = [], magnitude, ts, now = Date.now(), msecs, locationsKeep = [], timestampsKeep;
 
-          globe.resetData();
-          for (var i = 0; i < totalPoints.length; i++) {
+          this.resetData();
+          /** Loop over all of the locations to see if they have valid timestamps. */
+          for (var i = 0; i < this.locations.length; i++) {
               magnitude = 0;
-              /*if (i == 63){
-                debugger;
-              }*/
-              for (var k = 0; k < totalPoints[i].timestamps.length; k++) {
-                ts = totalPoints[i].timestamps[k];
+              timestampsKeep = [];
+              /**
+               * Check each timestamp in the location and see if it is recent
+               * enough to be rendered.
+               */
+              for (var k = 0; k < this.locations[i].timestamps.length; k++) {
+                ts = this.locations[i].timestamps[k];
                 msecs = now - ts;
 
-                if(1*60*1000 > msecs){
-                    magnitude += 1-msecs/1/60/1000;
+                if(5*60*1000 > msecs){
+                    magnitude += 1-msecs/5/60/1000;
+                    /** Only keep relevant timestamps for later. */
+                    timestampsKeep.push(ts);
                 }
               }
-              magnitude = magnitude/totalPoints[i].timestamps.length;
-              all.push(totalPoints[i].latitude, totalPoints[i].longitude, magnitude);
-          };
-          globe.addData(all, {format: 'magnitude', name: '1990', animated: true})
-          globe.createPoints();
+              if (magnitude) {
+                magnitude = magnitude/this.locations[i].timestamps.length;
+                all.push(this.locations[i].latitude, this.locations[i].longitude, magnitude);
+                /** Overwrite the old timestamps with relevant ones. */
+                this.locations[i].timestamps = timestampsKeep;
+                /** Save locations with visible timestamps for later. */
+                locationsKeep.push(this.locations[i]);
+              }
+          }
+          this.addData(all, {format: 'magnitude', name: '1990', animated: true});
+          this.createPoints();
           settime(globe, 0)();
-      }
+          /** Overwrite the old locations with the useful ones. */
+          this.locations = locationsKeep;
+      };
 
       globe.parsePoints = function(list){
-        var magnitude, msecs, ts, now = Date.now();
+        this.locations.concat(list);
         for (var i = 0; i < list.length; i++) {
-            globe.addPoint(list[i]);
-        };
-        globe.updatePoints();
-      }
+            this.addPoint(list[i]);
+        }
+        this.updatePoints();
+      };
 
-        document.body.style.backgroundImage = 'none'; // remove loading
+      document.body.style.backgroundImage = 'none'; // remove loading
     }

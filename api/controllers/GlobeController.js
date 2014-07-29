@@ -34,7 +34,7 @@ module.exports = {
   },
 
   ready: function(req, res) {
-
+    Location.subscribe(req.socket);
 
     Location.find().done(function(err, locations) {
       locations.filter(function(location) {
