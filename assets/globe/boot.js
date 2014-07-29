@@ -2,21 +2,13 @@
       Detector.addGetWebGLMessage();
     } else {
 
-      var years = ['1990','1995','2000'];
       var container = document.getElementById('container');
       var globe = new DAT.Globe(container);
 
       var i, tweens = [];
 
       var settime = function(globe, t) {
-        return function() {
-          new TWEEN.Tween(globe).to({time: t/years.length},500).easing(TWEEN.Easing.Cubic.EaseOut).start();
-          var y = document.getElementById('year'+years[t]);
-          var yy = document.getElementsByClassName('year');
-          for(i=0; i<yy.length; i++) {
-            yy[i].setAttribute('class','year');
-          }
-        };
+        new TWEEN.Tween(globe).to({time: t},500).easing(TWEEN.Easing.Cubic.EaseOut).start();
       };
 
       TWEEN.start();
@@ -67,9 +59,9 @@
                 locationsKeep.push(this.locations[i]);
               }
           }
-          this.addData(all, {format: 'magnitude', name: '1990', animated: true});
+          this.addData(all, {format: 'magnitude', animated: true});
           this.createPoints();
-          settime(globe, 0)();
+          settime(globe, 0);
           /** Overwrite the old locations with the useful ones. */
           this.locations = locationsKeep;
       };
