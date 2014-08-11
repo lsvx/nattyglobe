@@ -44,6 +44,7 @@ module.exports = {
                   // The User was created successfully!
                   } else {
                     console.log("Located Created!! ", location);
+                    sails.io.sockets.emit('location', location);
                   }
                 });
               }
@@ -51,15 +52,18 @@ module.exports = {
                 
                 location.timestamps.push(data.timestamp);
                 Location.update({id: ll}, {timestamps: location.timestamps}, function (err, location) {
-                   if (err) { console.log(err); }
-                   else { console.log('location timestamp added'); }
-                 });
+                  if (err) { console.log(err); }
+                  else {
+                    console.log('location timestamp added', location[0]);
+                    sails.io.sockets.emit('location', location[0]);
+                  }
+                });
               }
             }
           });
         // Emit a message to all the connected sockets with the new data.
-        sails.io.sockets.emit('message', data);
-        console.log(data);
+
+        // console.log(data);
       });
     }
     catch (e) {

@@ -66,6 +66,7 @@ DAT.Globe = function(container, opts) {
     var distance = 100000, distanceTarget = 100000;
     var padding = 40;
     var PI_HALF = Math.PI / 2;
+    this.locations = [];
 
 
     function init() {
@@ -250,6 +251,51 @@ DAT.Globe = function(container, opts) {
     }
 
 
+    this.addPoint = function(obj){
+          for (var i = 0; i < this.locations.length; i++) {
+              if(this.locations[i].id == obj.id){
+                  this.locations[i].timestamps = obj.timestamps;
+                  return this.locations[i];
+              }
+          }
+          this.locations.push(obj);
+          return obj;
+    };
+
+   this.updatePoints = function(){
+          var all = [], magnitude, ts, now = Date.now(), msecs, locationsKeep = [], timestampsKeep;
+
+
+          for (var i = 0; i < this.locations.length; i++) {
+              magnitude = 0;
+              timestampsKeep = [];
+              /**
+               * Check each timestamp in the location and see if it is recent
+               * enough to be rendered.
+               */
+              for (var k = 0; k < this.locations[i].timestamps.length; k++) {
+                ts = this.locations[i].timestamps[k];
+                msecs = now - ts;
+
+                if(5*60*1000 > msecs){
+                    magnitude += 1-msecs/5/60/1000;
+                    /** Only keep relevant timestamps for later. */
+                    timestampsKeep.push(ts);
+                }
+              }
+              if (magnitude) {
+                this.locations[i].magnitude = magnitude/this.locations[i].timestamps.length;
+                this.addData(this.locations[i]);
+
+                this.locations[i].timestamps = timestampsKeep;
+                /** Save locations with visible timestamps for later. */
+                locationsKeep.push(this.locations[i]);
+              }
+          }
+          /** Overwrite the old locations with the useful ones. */
+          this.locations = locationsKeep;
+      };
+
     this.addData = function(point){
         //-32.9479009,-60.6650597, 0.7
         var lat = point.latitude, lng = point.longitude, mag = point.magnitude,
@@ -260,7 +306,10 @@ DAT.Globe = function(container, opts) {
                 x = scale * Math.sin(phi) * Math.cos(theta),
                 y = scale * Math.cos(phi),
                 z = scale * Math.sin(phi) * Math.sin(theta),
+                color  = new THREE.Color(),
                 vertex, material;
+
+        color.setHSL( ( 0.6 - ( point.magnitude * 0.5 ) ), 1.0, 0.5 );
 
         if (undefined === point.vertex){
             vertex = new THREE.Vector3(x, y, z);
@@ -269,17 +318,15 @@ DAT.Globe = function(container, opts) {
                 vertex
             );
 
-            line = new THREE.Line( geometry, material = new THREE.LineBasicMaterial( { color: 0x2685AA, opacity: 1 } ) );
+            line = new THREE.Line( geometry, material = new THREE.LineBasicMaterial( { color: color, opacity: 1 } ) );
 
             scene.add(line);
             point.vertex = vertex;
             point.geo = geometry;
             point.material = material;
         }else{
-            var c = new THREE.Color();
-            c.setHSL( ( 0.6 - ( point.magnitude * 0.5 ) ), 1.0, 0.5 );
-            point.material.color = c;
 
+            point.material.color = color;
             point.vertex.setX(x);
             point.vertex.setY(y);
             point.vertex.setZ(z);
@@ -289,10 +336,6 @@ DAT.Globe = function(container, opts) {
     }
 
     this.animate = animate;
-
-    this.resetData = function(){
-        console.log('resetdata');
-    }
 
     init();
 
