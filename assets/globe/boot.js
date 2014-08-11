@@ -1,3 +1,5 @@
+'use strict';
+
     if(!Detector.webgl){
       Detector.addGetWebGLMessage();
     } else {
@@ -28,7 +30,7 @@
           return obj;
       };
 
-      globe.updatePoints = function(){
+      globe.updatePoints = function() {
           var all = [], magnitude, ts, now = Date.now(), msecs, locationsKeep = [], timestampsKeep;
 
           this.resetData();
@@ -66,12 +68,19 @@
           this.locations = locationsKeep;
       };
 
-      globe.parsePoints = function(list){
+      globe.parsePoints = function(list) {
         this.locations.concat(list);
         for (var i = 0; i < list.length; i++) {
             this.addPoint(list[i]);
         }
         this.updatePoints();
+      };
+
+      globe.autoUpdate = function() {
+        window.requestAnimationFrame(function() {
+          globe.updatePoints();
+          globe.autoUpdate();
+        });
       };
 
       document.body.style.backgroundImage = 'none'; // remove loading

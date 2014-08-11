@@ -29,6 +29,9 @@
     // Expose connected `socket` instance globally so that it's easy
     // to experiment with from the browser console while prototyping.
     window.socket = socket;
+
+    // Start updating the globe automatically.
+    globe.autoUpdate();
 })(
     window.io
 );
