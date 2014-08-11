@@ -296,6 +296,14 @@ DAT.Globe = function(container, opts) {
           this.locations = locationsKeep;
       };
 
+    /**
+     * Receives a point object and represent it on the globe. If the point already existed,
+     * it updates its color and size.
+     * Point is an object with the following attributes:
+     *     - latitude
+     *     - longitude
+     *     - magnitude
+     */
     this.addData = function(point){
         //-32.9479009,-60.6650597, 0.7
         var lat = point.latitude, lng = point.longitude, mag = point.magnitude,
@@ -312,6 +320,7 @@ DAT.Globe = function(container, opts) {
         color.setHSL( ( 0.6 - ( point.magnitude * 0.5 ) ), 1.0, 0.5 );
 
         if (undefined === point.vertex){
+            // the point is not in the globe yet
             vertex = new THREE.Vector3(x, y, z);
             geometry = new THREE.CubeGeometry(0.75, 0.75, 1);
             geometry.vertices.push(
@@ -325,13 +334,12 @@ DAT.Globe = function(container, opts) {
             point.geo = geometry;
             point.material = material;
         }else{
-
+            // The point is already in the globe
             point.material.color = color;
             point.vertex.setX(x);
             point.vertex.setY(y);
             point.vertex.setZ(z);
             point.geo.verticesNeedUpdate = true;
-            window.point = point;
         }
     }
 
