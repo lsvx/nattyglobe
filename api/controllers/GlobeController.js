@@ -36,10 +36,11 @@ module.exports = {
   ready: function(req, res) {
     Location.subscribe(req.socket);
 
+    curr = Number(moment().subtract('5', 'minutes').format("X"));
+    
     Location.find().done(function(err, locations) {
       locations.filter(function(location) {
         location.timestamps.filter(function(timestamp) {
-          curr = Number(moment().subtract('5', 'minutes').format("X"));
           if (timestamp > curr)  return timestamp;
         });
 
