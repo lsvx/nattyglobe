@@ -1,15 +1,15 @@
 
 var moment = require('moment');
-var curr = Number(moment().add('5', 'minutes').format("X"));
+var _ = require('lodash');
 
 function prune() {
 
+    var curr = Date.now();
     Location.find().done(function(err, locations) {
 
         locations.forEach(function(location) {
             var filteredTimestamps  = location.timestamps.filter(function(timestamp) {
-                var diff = Math.abs(curr - timestamp);
-                console.log(diff);
+                var diff = (curr - timestamp);
                 if (diff < 300000)  {
                     return true;
                 }
@@ -22,11 +22,15 @@ function prune() {
 
             } else {
 
-                Location.update({id: location.id}, {timestamps: filteredTimestamps},
-                    function(err, location) {
-                        if (err) return err;
-                        console.log('Location updated:', location);
-                    });
+                if( _.difference(location.timestamps, filteredTimestamps).length) {
+
+                    Location.update({id: location.id}, {timestamps: filteredTimestamps},
+                        function(err, location) {
+                            if (err) return err;
+                            console.log('Location updated:', location);
+                        });
+                } else {
+                }
             }
         });
 
