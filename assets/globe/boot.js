@@ -80,7 +80,7 @@
         window.requestAnimationFrame(function() {
           globe.updatePoints();
           globe.autoUpdate();
-        };
+        });
       };
 
       document.body.style.backgroundImage = 'none'; // remove loading
