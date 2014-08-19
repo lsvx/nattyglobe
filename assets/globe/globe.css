@@ -4,7 +4,7 @@
   body {
     margin: 0;
     padding: 0;
-    background: #000000 url(/nattyglobe/loading.gif) center center no-repeat;
+    background: #000000 url(/nattyglobe/globe/loading.gif) center center no-repeat;
     color: #ffffff;
     font-family: sans-serif;
     font-size: 13px;
@@ -93,5 +93,5 @@
     position: absolute;
     bottom: 15px;
     left: 20px;
-    background: url(/nattyglobe/ce.png);
+    background: url(/nattyglobe/globe/ce.png);
   }
