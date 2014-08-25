@@ -12,7 +12,7 @@ function prune() {
                 console.log('timestamp', timestamp);
                 console.log('curr', curr);
                 var diff = (curr - timestamp);
-                if (diff < 20000)  {
+                if (diff < 300000)  {
                     return true;
                 }
                 return false;
@@ -46,7 +46,7 @@ function prune() {
 // Run this function every 5 minutes
 
 module.exports = (function() {
-    setInterval(prune, 1000);
+    setInterval(prune, 300000);
 })();
 
 
