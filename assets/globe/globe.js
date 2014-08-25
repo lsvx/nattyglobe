@@ -82,6 +82,7 @@ DAT.Globe = function(container, opts) {
         camera.position.z = distance;
 
         scene = new THREE.Scene();
+        this.scene = scene;
 
         var geometry = new THREE.SphereGeometry(200, 40, 30);
 
@@ -328,6 +329,7 @@ DAT.Globe = function(container, opts) {
             );
 
             line = new THREE.Line( geometry, material = new THREE.LineBasicMaterial( { color: color, opacity: 1 } ) );
+            this.addLineTexture(point, x,y,z);
 
             scene.add(line);
             point.vertex = vertex;
@@ -340,6 +342,7 @@ DAT.Globe = function(container, opts) {
             point.vertex.setY(y);
             point.vertex.setZ(z);
             point.geo.verticesNeedUpdate = true;
+            this.updateLineTexture(point,x,y,z);
         }
     }
 
