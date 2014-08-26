@@ -1,4 +1,4 @@
-var step = 1,               // speed of the particles
+var step = 3,               // speed of the particles
     globeWidth=200;         // width of the globe:
                             //     if 200, particles start from the surface of the globe
                             //     if 0, the particles start from the center of the globe
@@ -14,8 +14,13 @@ Particle = function(pointData, x, y, z){
 		geometry.vertices.push(vertex);
 
 		particleMaterial = new THREE.ParticleBasicMaterial({
-          size: 20,
-          color: 0xffffff
+          size: 100,
+          color: 0xffffff,
+          map: THREE.ImageUtils.loadTexture(
+             "images/particleA.png"
+          ),
+          blending: THREE.AdditiveBlending,
+          transparent: true
         });
 
         particles = new THREE.ParticleSystem(geometry, particleMaterial);
