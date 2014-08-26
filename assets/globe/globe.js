@@ -342,7 +342,7 @@ DAT.Globe = function(container, opts) {
             point.vertex.setY(y);
             point.vertex.setZ(z);
             point.geo.verticesNeedUpdate = true;
-            this.updateLineTexture(point,x,y,z);
+            this.updateLineTexture(point,x,y,z, scale);
         }
     }
 
