@@ -1,5 +1,6 @@
 var amqp = require('amqp');
 var messenger = require('../api/services/messenger');
+var pruner = require('../api/services/pruner');
 
 module.exports.bootstrap = function (cb) {
     var connection = amqp.createConnection({
