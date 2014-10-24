@@ -1,4 +1,4 @@
-var step = 3,               // speed of the particles
+var step = 1,               // speed of the particles
     globeWidth=200;         // width of the globe:
                             //     if 200, particles start from the surface of the globe
                             //     if 0, the particles start from the center of the globe
@@ -13,9 +13,33 @@ Particle = function(pointData, x, y, z){
 		geometry = new THREE.Geometry();
 		geometry.vertices.push(vertex);
 
-		particleMaterial = new THREE.ParticleBasicMaterial({
+    // attributes
+     attributes = {
+
+         alpha: { type: 'f', value: [] },
+
+     };
+     // uniforms
+     uniforms = {
+
+         color: { type: "c", value: new THREE.Color( 0x00ff00 ) },
+
+     };
+     // point cloud material
+     var shaderMaterial = new THREE.ShaderMaterial( {
+
+         uniforms:       uniforms,
+         attributes:     attributes,
+         vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+         fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+         transparent:    true
+
+     });
+
+
+		    particleMaterial = new THREE.PointCloudMaterial({
           size: 100,
-          color: 0xffffff,
+          color: 0xFFCC00,
           map: THREE.ImageUtils.loadTexture(
              "images/particleA.png"
           ),
@@ -23,9 +47,10 @@ Particle = function(pointData, x, y, z){
           transparent: true
         });
 
-        particles = new THREE.ParticleSystem(geometry, particleMaterial);
+        particles = new THREE.PointCloud(geometry, particleMaterial);
 
         particles.dynamic = true;
+
 	}
 
 	this.updateParticle = function(bx,by,bz, max){
