@@ -96,7 +96,6 @@ DAT.Globe = function(container, opts) {
             uniforms: uniforms,
             vertexShader: shader.vertexShader,
             fragmentShader: shader.fragmentShader
-
         });
 
         mesh = new THREE.Mesh(geometry, material);
@@ -113,8 +112,7 @@ DAT.Globe = function(container, opts) {
             fragmentShader: shader.fragmentShader,
             side: THREE.BackSide,
             blending: THREE.AdditiveBlending,
-            transparent: false
-
+            transparent: true
         });
 
         mesh = new THREE.Mesh(geometry, material);

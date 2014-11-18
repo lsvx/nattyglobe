@@ -35,21 +35,21 @@ Particle = function(pointData, x, y, z){
          transparent:    true
 
      });
+     
+    var particleTexture = THREE.ImageUtils.loadTexture('images/particleB.png');
 
-
-		    particleMaterial = new THREE.PointCloudMaterial({
-          size: 100,
-          color: 0xFFCC00,
-          map: THREE.ImageUtils.loadTexture(
-             "images/particleA.png"
-          ),
-          blending: THREE.AdditiveBlending,
-          transparent: true
-        });
-
-        particles = new THREE.PointCloud(geometry, particleMaterial);
-
-        particles.dynamic = true;
+    var particleMaterial = new THREE.ParticleBasicMaterial({ 
+              map: particleTexture, 
+              transparent: true, 
+              size: 100,
+              blending: THREE.NormalBlending, 
+              alphaTest: 0.5,
+              opacity: 0.8 //If you want to do add transparency to the particle
+    });
+    
+    particles = new THREE.ParticleSystem(geometry, particleMaterial);
+    //particles.position.set(0, 0, 0);
+    particles.dynamic = true;
 
 	}
 
@@ -70,11 +70,11 @@ Particle = function(pointData, x, y, z){
         cx = d*bx;
         cy = d*by;
         cz = d*bz;
-
-		vertex.setX(cx);
+        vertex.setX(cx);
 		vertex.setY(cy);
 		vertex.setZ(cz);
-		geometry.verticesNeedUpdate = true;
+        //particles.position.set(cx, cy, cz);    
+        geometry.verticesNeedUpdate = true;
 	}
 
 
@@ -94,6 +94,6 @@ DAT.Globe.prototype.addLineTexture = function(pointData, x,y,z){
 }
 
 DAT.Globe.prototype.updateLineTexture = function(pointData, x,y,z, max){
-	var particle = textures[pointData.id];
+  	var particle = textures[pointData.id];
 	particle.updateParticle(x,y,z, max);
 }
