@@ -21,33 +21,45 @@ Particle = function(pointData, x, y, z){
      };
      // uniforms
      uniforms = {
-
          color: { type: "c", value: new THREE.Color( 0x00ff00 ) },
-
      };
      // point cloud material
-     var shaderMaterial = new THREE.ShaderMaterial( {
+    var shaderMaterial = new THREE.ShaderMaterial( {
+        uniforms:       uniforms,
+        attributes:     attributes,
+        vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+        fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+        transparent:    true
+    });
 
-         uniforms:       uniforms,
-         attributes:     attributes,
-         vertexShader:   document.getElementById( 'vertexshader' ).textContent,
-         fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
-         transparent:    true
-
-     });
-     
     var particleTexture = THREE.ImageUtils.loadTexture('images/particleB.png');
 
-    var particleMaterial = new THREE.ParticleBasicMaterial({ 
-              map: particleTexture, 
-              transparent: true, 
-              size: 100,
-              blending: THREE.NormalBlending, 
-              alphaTest: 0.5,
-              opacity: 0.8 //If you want to do add transparency to the particle
+    var particleMaterial = new THREE.ParticleBasicMaterial({
+        map: particleTexture,
+        transparent: true,
+        size: 30,
+        blending: THREE.AdditiveBlending,
+        alphaTest: 0.5,
+        //opacity: 0.8 //If you want to do add transparency to the particle
     });
-    
-    particles = new THREE.ParticleSystem(geometry, particleMaterial);
+
+    particleGroup = new THREE.Object3D({transparent: true});
+    var radiusRange = 10;
+    var spriteMaterial = new THREE.SpriteMaterial( {
+        map: particleTexture,
+        transparent: true,
+        blending: THREE.NormalBlending,
+    });
+
+    var sprite = new THREE.Sprite( spriteMaterial );
+    sprite.scale.set( 22, 22, 1.0 ); // imageWidth, imageHeight
+    sprite.position.set( 0, 0, 0 );
+
+    sprite.material.color.setHSL( Math.random(), 0.9, 0.7 );
+    particleGroup.add( sprite );
+
+    particles = particleGroup;
+    //particles = new THREE.ParticleSystem(geometry, particleMaterial);
     //particles.position.set(0, 0, 0);
     particles.dynamic = true;
 
@@ -57,7 +69,7 @@ Particle = function(pointData, x, y, z){
         var cx,cy,cz, d;
         currentStep +=step;
 
-        if(max == globeWidth){
+        if(Math.floor(max) == globeWidth){
             // the line stopped moving
             currentStep = globeWidth;
         }else if(currentStep> max){
@@ -70,11 +82,14 @@ Particle = function(pointData, x, y, z){
         cx = d*bx;
         cy = d*by;
         cz = d*bz;
-        vertex.setX(cx);
-		vertex.setY(cy);
-		vertex.setZ(cz);
-        //particles.position.set(cx, cy, cz);    
-        geometry.verticesNeedUpdate = true;
+        //vertex.setX(cx);
+		//vertex.setY(cy);
+		//vertex.setZ(cz);
+        particles.position.y = cy;
+        particles.position.x = cx;
+        particles.position.z = cz;
+        //particles.position.set(cx, cy, cz);
+        //geometry.verticesNeedUpdate = true;
 	}
 
 
@@ -91,6 +106,37 @@ DAT.Globe.prototype.addLineTexture = function(pointData, x,y,z){
     var particle = new Particle(pointData, x,y,z);
     textures[pointData.id] = particle;
     scene.add(particle.getParticles());
+
+
+    var particleTexture = THREE.ImageUtils.loadTexture( 'images/particleB.png' );
+
+    particleGroup = new THREE.Object3D();
+    particleAttributes = { startSize: [], startPosition: [], randomness: [] };
+
+    var totalParticles = 1;
+    var radiusRange = 10;
+    for( var i = 0; i < totalParticles; i++ )
+    {
+        var spriteMaterial = new THREE.SpriteMaterial( {
+            map: particleTexture,
+            useScreenCoordinates: false,
+            color: 0xffffff,
+            size: 100,
+            transparent: true
+        });
+        var sprite = new THREE.Sprite( spriteMaterial );
+        sprite.scale.set( 30, 10, 1.0 ); // imageWidth, imageHeight
+        sprite.position.set( 0, 0, 0 );
+        sprite.position.setLength( radiusRange * (Math.random() * 0.1 + 0.9) );
+        sprite.material.color.setHSL( Math.random(), 0.9, 0.7 );
+        sprite.material.blending = THREE.AdditiveBlending; // "glowing" particles
+        particleGroup.add( sprite );
+        particleAttributes.startPosition.push( sprite.position.clone() );
+        //particleAttributes.randomness.push( Math.random() );
+    }
+    particleGroup.position.y = 300;
+    particleGroup.position.x = 300;
+    scene.add( particleGroup );
 }
 
 DAT.Globe.prototype.updateLineTexture = function(pointData, x,y,z, max){
