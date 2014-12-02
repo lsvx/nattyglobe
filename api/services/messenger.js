@@ -3,8 +3,11 @@ var geoip = require('geoip-lite');
 var q = require('q');
 
 module.exports = {
-  lookup: function(ip) {
-    var d = q.defer();
+  lookup: function(data) {
+    var d = q.defer(),
+        ip  = data.ip;
+
+
     if (ip === '127.0.0.1') {
         http.get('http://myexternalip.com/raw', function(response) {
             var ip = response.headers['my-external-ip'],
@@ -20,10 +23,9 @@ module.exports = {
   newLogin: function(msg) {
     var self = this;
     try {
-      self.lookup(msg.ip).then(function(data) {
+      self.lookup(msg).then(function(data) {
         var ll = data.location.ll[0].toString() + data.location.ll[1].toString();
         data.timestamp = msg.timestamp;
-        console.log(data, ll);
         Location.findOneById(ll)
           .done(function(err, location) {
             if (err) {
@@ -49,7 +51,7 @@ module.exports = {
                 });
               }
               else {
-                
+
                 location.timestamps.push(data.timestamp);
                 Location.update({id: ll}, {timestamps: location.timestamps}, function (err, location) {
                   if (err) { console.log(err); }
