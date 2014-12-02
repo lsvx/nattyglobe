@@ -26,22 +26,9 @@ module.exports.bootstrap = function (cb) {
             autoDelete: false,
             durable: true
         }, function(queue) {
-            /*var timestamp = new Date().getTime();
-            var ip = randIp();
-            var msg = '[{\"ip\": \"'+ip+'\", \"timestamp\": '+ timestamp +'}]';
-            var j = JSON.parse(msg);
-            console.log(msg);
-
-            messenger.newLogin(j[0]);*/
-
-
-
             queue.subscribe({ack: true}, function(msg) {
-                console.log("OKKK");
                 var msg = msg.data.toString();
-                console.log(msg);
                 var j = JSON.parse(msg);
-                console.log(j);
                 messenger.newLogin(j[0]);
                 queue.shift(); // basic_ack equivalent
             });

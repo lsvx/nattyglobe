@@ -17,6 +17,7 @@ module.exports.adapters = {
     // If you leave the adapter config unspecified
     // in a model definition, 'default' will be used.
     'default': 'redis',
+    'useIpForLocations': true,
 
     // Persistent adapter for DEVELOPMENT ONLY
     // (data is preserved when the server shuts down)

@@ -3,74 +3,76 @@ var geoip = require('geoip-lite');
 var q = require('q');
 
 module.exports = {
-  lookup: function(data) {
-    var d = q.defer(),
+    lookup: function(data) {
+        var d = q.defer(),
         ip  = data.ip;
 
-
-    if (ip === '127.0.0.1') {
-        http.get('http://myexternalip.com/raw', function(response) {
-            var ip = response.headers['my-external-ip'],
-                location = geoip.lookup(ip);
-            d.resolve({ ip: ip, location: location });
-        });
-    }
-    else {
-      d.resolve({ ip: ip, location: geoip.lookup(ip) });
-    }
-    return d.promise;
-  },
-  newLogin: function(msg) {
-    var self = this;
-    try {
-      self.lookup(msg).then(function(data) {
-        var ll = data.location.ll[0].toString() + data.location.ll[1].toString();
-        data.timestamp = msg.timestamp;
-        Location.findOneById(ll)
-          .done(function(err, location) {
-            if (err) {
-              console.log(err);
+        if(sails.config.useIpForLocations){
+            if (ip === '127.0.0.1') {
+                http.get('http://myexternalip.com/raw', function(response) {
+                    var ip = response.headers['my-external-ip'],
+                    location = geoip.lookup(ip);
+                    d.resolve({ ip: ip, location: location });
+                });
             } else {
-              if (location === undefined) {
-                Location.create({
-                  id: ll,
-                  timestamps: [data.timestamp],
-                  latitude: data.location.ll[0],
-                  longitude: data.location.ll[1]
-                }).done(function(err, location) {
-
-                  // Error handling
-                  if (err) {
-                    console.log('here I go !!');
-                    return console.log(err);
-                  // The User was created successfully!
-                  } else {
-                    console.log("Located Created!! ", location);
-                    sails.io.sockets.emit('location', location);
-                  }
-                });
-              }
-              else {
-
-                location.timestamps.push(data.timestamp);
-                Location.update({id: ll}, {timestamps: location.timestamps}, function (err, location) {
-                  if (err) { console.log(err); }
-                  else {
-                    console.log('location timestamp added', location[0]);
-                    sails.io.sockets.emit('location', location[0]);
-                  }
-                });
-              }
+                d.resolve({ ip: ip, location: geoip.lookup(ip) });
             }
-          });
-        // Emit a message to all the connected sockets with the new data.
+        }else{
+            if (data.latitude != undefined) {
+                    d.resolve({ ip: ip, location: {
+                        ll: [data.latitude, data.longitude] }
+                    });
+            }
+        }
+        return d.promise;
+    },
+    newLogin: function(msg) {
+        var self = this;
+        try {
+            self.lookup(msg).then(function(data) {
+                var ll = data.location.ll[0].toString() + data.location.ll[1].toString();
+                data.timestamp = msg.timestamp;
+                Location.findOneById(ll).done(function(err, location) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        if (location === undefined) {
+                            Location.create({
+                                id: ll,
+                                timestamps: [data.timestamp],
+                                latitude: data.location.ll[0],
+                                longitude: data.location.ll[1]
+                            }).done(function(err, location) {
+                                // Error handling
+                                if (err) {
+                                    console.log('here I go !!');
+                                    return console.log(err);
+                                // The User was created successfully!
+                                } else {
+                                    console.log("Located Created!! ", location);
+                                    sails.io.sockets.emit('location', location);
+                                }
+                            });
+                        } else {
+                            location.timestamps.push(data.timestamp);
+                            Location.update({id: ll}, {timestamps: location.timestamps}, function (err, location) {
+                                if (err) { console.log(err); }
+                                else {
+                                    console.log('location timestamp added', location[0]);
+                                    sails.io.sockets.emit('location', location[0]);
+                                }
+                            });
+                        }
+                    }
+                });
+                // Emit a message to all the connected sockets with the new data.
 
-        // console.log(data);
-      });
-    }
-    catch (e) {
-      console.log(e);
-    }
+                // console.log(data);
+            });
+        }
+        catch (e) {
+            console.log(e);
+        }
     return true;
-  }
+    }
 };
