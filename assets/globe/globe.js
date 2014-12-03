@@ -91,7 +91,6 @@ DAT.Globe = function(container, opts) {
         uniforms['texture'].value = THREE.ImageUtils.loadTexture(imgDir+'world.jpg');
 
         material = new THREE.ShaderMaterial({
-
             uniforms: uniforms,
             vertexShader: shader.vertexShader,
             fragmentShader: shader.fragmentShader
@@ -127,21 +126,15 @@ DAT.Globe = function(container, opts) {
         renderer.setSize(w, h);
 
         renderer.domElement.style.position = 'absolute';
-
         container.appendChild(renderer.domElement);
 
         container.addEventListener('mousedown', onMouseDown, false);
-
         container.addEventListener('mousewheel', onMouseWheel, false);
-
         document.addEventListener('keydown', onDocumentKeyDown, false);
-
         window.addEventListener('resize', onWindowResize, false);
-
         container.addEventListener('mouseover', function() {
             overRenderer = true;
         }, false);
-
         container.addEventListener('mouseout', function() {
             overRenderer = false;
         }, false);
@@ -213,7 +206,7 @@ DAT.Globe = function(container, opts) {
         }
     }
 
-    function onWindowResize( event ) {
+    function onWindowResize(event) {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize( window.innerWidth, window.innerHeight );
@@ -230,7 +223,6 @@ DAT.Globe = function(container, opts) {
         requestAnimationFrame(animate);
         render();
     }
-
 
     function render() {
         zoom(curZoomSpeed);
@@ -249,7 +241,7 @@ DAT.Globe = function(container, opts) {
     }
 
 
-    this.addPoint = function(obj){
+    this.addPoint = function(obj) {
           for (var i = 0; i < this.locations.length; i++) {
               if(this.locations[i].id == obj.id){
                   this.locations[i].timestamps = obj.timestamps;
@@ -260,18 +252,17 @@ DAT.Globe = function(container, opts) {
           return obj;
     };
 
-   this.updatePoints = function(){
-          var all = [], magnitude, ts, now = Date.now(), msecs, locationsKeep = [], timestampsKeep;
+   this.updatePoints = function() {
+        var all = [], magnitude, ts, now = Date.now(), msecs, locationsKeep = [], timestampsKeep;
 
-
-          for (var i = 0; i < this.locations.length; i++) {
-              magnitude = 0;
-              timestampsKeep = [];
-              /**
-               * Check each timestamp in the location and see if it is recent
-               * enough to be rendered.
-               */
-              for (var k = 0; k < this.locations[i].timestamps.length; k++) {
+        for (var i = 0; i < this.locations.length; i++) {
+            magnitude = 0;
+            timestampsKeep = [];
+            /**
+            * Check each timestamp in the location and see if it is recent
+            * enough to be rendered.
+            */
+            for (var k = 0; k < this.locations[i].timestamps.length; k++) {
                 ts = this.locations[i].timestamps[k];
                 msecs = now - ts;
 
@@ -280,19 +271,20 @@ DAT.Globe = function(container, opts) {
                     /** Only keep relevant timestamps for later. */
                     timestampsKeep.push(ts);
                 }
-              }
-              if (magnitude) {
+            }
+            if (magnitude) {
                 this.locations[i].magnitude = magnitude/this.locations[i].timestamps.length;
                 this.addData(this.locations[i]);
 
                 this.locations[i].timestamps = timestampsKeep;
                 /** Save locations with visible timestamps for later. */
                 locationsKeep.push(this.locations[i]);
-              }
-          }
-          /** Overwrite the old locations with the useful ones. */
-          this.locations = locationsKeep;
-      };
+            }
+        }
+
+        /** Overwrite the old locations with the useful ones. */
+        this.locations = locationsKeep;
+    };
 
     /**
      * Receives a point object and represent it on the globe. If the point already existed,
@@ -302,22 +294,22 @@ DAT.Globe = function(container, opts) {
      *     - longitude
      *     - magnitude
      */
-    this.addData = function(point){
+    this.addData = function(point) {
         //-32.9479009,-60.6650597, 0.7
         var lat = point.latitude, lng = point.longitude, mag = point.magnitude,
-                phi = (90 - lat) * Math.PI / 180,
-                theta = (180 - lng) * Math.PI / 180,
-                scale = 200*(1+point.magnitude),
-                line, geometry,
-                x = scale * Math.sin(phi) * Math.cos(theta),
-                y = scale * Math.cos(phi),
-                z = scale * Math.sin(phi) * Math.sin(theta),
-                color  = new THREE.Color(),
-                vertex, material;
+            phi = (90 - lat) * Math.PI / 180,
+            theta = (180 - lng) * Math.PI / 180,
+            scale = 200*(1+point.magnitude),
+            line, geometry,
+            x = scale * Math.sin(phi) * Math.cos(theta),
+            y = scale * Math.cos(phi),
+            z = scale * Math.sin(phi) * Math.sin(theta),
+            color  = new THREE.Color(),
+            vertex, material;
 
         color.setHSL( ( 0.6 - ( point.magnitude * 0.5 ) ), 1.0, 0.5 );
 
-        if (undefined === point.vertex){
+        if (undefined === point.vertex) {
             // the point is not in the globe yet
             vertex = new THREE.Vector3(x, y, z);
             geometry = new THREE.CubeGeometry(0.75, 0.75, 1);
@@ -332,7 +324,7 @@ DAT.Globe = function(container, opts) {
             point.vertex = vertex;
             point.geo = geometry;
             point.material = material;
-        }else{
+        } else {
             // The point is already in the globe
             point.material.color = color;
             point.vertex.setX(x);
@@ -344,7 +336,5 @@ DAT.Globe = function(container, opts) {
     }
 
     this.animate = animate;
-
     init();
-
 }

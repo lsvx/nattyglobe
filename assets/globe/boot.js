@@ -1,25 +1,26 @@
-    if(!Detector.webgl){
-      Detector.addGetWebGLMessage();
-    } else {
+'use strict';
 
-      var container = document.getElementById('container');
-      var globe = new DAT.Globe(container);
+if(!Detector.webgl){
+    Detector.addGetWebGLMessage();
+} else {
+    var container = document.getElementById('container'),
+        globe = new DAT.Globe(container);
 
-      globe.animate();
+    globe.animate();
 
-      globe.parsePoints = function(list){
+    globe.parsePoints = function(list) {
         this.locations = this.locations.concat(list);
         for (var i = 0; i < list.length; i++) {
-          this.addPoint(list[i]);
+            this.addPoint(list[i]);
         }
-      };
+    };
 
-      globe.autoUpdate = function() {
+    globe.autoUpdate = function() {
         window.requestAnimationFrame(function() {
-          globe.updatePoints();
-          globe.autoUpdate();
+            globe.updatePoints();
+            globe.autoUpdate();
         });
-      };
+    };
 
-      document.body.style.backgroundImage = 'none'; // remove loading
-    }
+  document.body.style.backgroundImage = 'none'; // remove loading
+}
