@@ -26,3 +26,6 @@ node_modules
 
 # Temp directory
 .tmp
+
+#Bower components
+assets/bower_components/

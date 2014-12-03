@@ -9,8 +9,15 @@ if(!Detector.webgl){
     globe.animate();
 
     globe.parsePoints = function(list) {
-        this.locations = this.locations.concat(list);
-        for (var i = 0; i < list.length; i++) {
+        if(list[0].id){
+            //this.locations = _.without(this.locations, _.findWhere(this.locations, {id: list[0].id}));
+            var match = _.find(this.locations, function(item) { return item.id === list[0].id});
+            if(match){
+              match.timestamps = list[0].timestamps
+            }
+            this.locations = this.locations.concat(list);
+        }
+		    for (var i = 0; i < list.length; i++) {
             this.addPoint(list[i]);
         }
     };
