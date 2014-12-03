@@ -68,7 +68,6 @@ DAT.Globe = function(container, opts) {
     var PI_HALF = Math.PI / 2;
     this.locations = [];
 
-
     function init() {
 
         container.style.color = '#fff';
