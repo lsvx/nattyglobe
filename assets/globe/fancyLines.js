@@ -3,8 +3,6 @@ var step = 1,               // speed of the particles
                             //     if 200, particles start from the surface of the globe
                             //     if 0, the particles start from the center of the globe
 
-
-
 Particle = function(pointData, x, y, z){
 	var vertex, geometry, particles, cx=0, cy=0, cz= 0, currentStep=globeWidth;
 
