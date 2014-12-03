@@ -7,7 +7,7 @@ module.exports = {
         var d = q.defer(),
         ip  = data.ip;
 
-        if(sails.config.useIpForLocations){
+        if(sails.config.messaging.useIpForLocations){
             if (ip === '127.0.0.1') {
                 http.get('http://myexternalip.com/raw', function(response) {
                     var ip = response.headers['my-external-ip'],
