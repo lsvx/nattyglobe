@@ -3,13 +3,7 @@ var messenger = require('../api/services/messenger');
 var pruner = require('../api/services/pruner');
 
 module.exports.bootstrap = function (cb) {
-    var connection = amqp.createConnection({
-        host: 'localhost',
-        port: 5672,
-        login: 'nattyglobe',
-        password: 'nattyglobe',
-        vhost: 'nattyglobe'
-    });
+    var connection = amqp.createConnection(sails.config.messaging.connection);
 
     connection.on('ready', function(){
         connection.queue('nattyglobe', {
